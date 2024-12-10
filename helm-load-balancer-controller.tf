@@ -72,7 +72,7 @@ resource "aws_iam_policy" "aws_load_balancer_controller_policy" {
           "shield:DescribeSubscription",
           "shield:ListProtections"
         ],
-        Resource = ["arn:aws:elasticloadbalancing:*:${data.aws_caller_identity.current.account_id}:targetgroup/*"]
+        Resource = "*"
       }
     ]
   })
