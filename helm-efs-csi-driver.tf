@@ -1,3 +1,4 @@
+# Define EFS CSI Driver IAM Policy
 resource "aws_iam_policy" "efs_csi_driver_policy" {
   name        = "AmazonEKS_EFS_CSI_DriverPolicy"
   description = "IAM policy for AWS EFS CSI Driver"
@@ -19,11 +20,13 @@ resource "aws_iam_policy" "efs_csi_driver_policy" {
   })
 }
 
+# Create IAM Role for EFS CSI Driver
 resource "aws_iam_role" "efs_csi_driver_role" {
   name               = "AmazonEKS_EFS_CSI_Driver_Role"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
 
+# Define Assume Role Policy Document
 data "aws_iam_policy_document" "assume_role_policy" {
   statement {
     actions = ["sts:AssumeRoleWithWebIdentity"]
@@ -42,11 +45,13 @@ data "aws_iam_policy_document" "assume_role_policy" {
   }
 }
 
+# Attach the Policy to the Role
 resource "aws_iam_role_policy_attachment" "efs_csi_driver_policy_attachment" {
   role       = aws_iam_role.efs_csi_driver_role.name
   policy_arn = aws_iam_policy.efs_csi_driver_policy.arn
 }
 
+# Helm Release for EFS CSI Driver
 resource "helm_release" "efs_csi_driver" {
   name       = "aws-efs-csi-driver"
   namespace  = "kube-system"

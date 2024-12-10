@@ -1,35 +1,30 @@
+variable "environment_label" {
+  description = "Cluster type label (e.g. testing, prod, etc.)"
+  type        = string
+  default     = "prod"
+}
+
+variable "cluster_name" {
+  description = "EKS cluster name"
+  type        = string
+  default     = "tarterware-eks"
+}
+
 variable "region" {
   description = "AWS region"
   type        = string
-  default     = "us-east-2"
+  default     = "us-east-1"
 }
 
-variable "gis_tarterware_efs_id" {
-  description = "GIS EFS ID"
-  type        = string
+variable "disk_size" {
+  description = "Disk size for EKS nodes"
+  type        = number
+  default     = 50
 }
 
-variable "gis_tarterware_efs_arn" {
-  description = "GIS EFSARN"
-  type        = string
+variable "node_instance_type" {
+  description = "Instance types for EKS nodes"
+  type        = list(string)
+  default     = ["t3.medium"]
 }
 
-variable "mile_weaver_files_efs_id" {
-  description = "Mile Weaver Files EFS ID"
-  type        = string
-}
-
-variable "mile_weaver_files_efs_arn" {
-  description = "Mile Weaver Files EFS ARN"
-  type        = string
-}
-
-variable "mile_weaver_mongodb_efs_id" {
-  description = "Mile Weaver MongoDB EFS ID"
-  type        = string
-}
-
-variable "mile_weaver_mongodb_efs_arn" {
-  description = "Mile Weaver MongoDB EFS ARN"
-  type        = string
-}

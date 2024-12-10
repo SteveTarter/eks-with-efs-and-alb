@@ -2,7 +2,7 @@ module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "5.8.1"
 
-  name = "tarterware-vpc"
+  name = "${var.cluster_name}-vpc"
   cidr = "10.0.0.0/16"
 
   azs             = slice(data.aws_availability_zones.available.names, 0, 3)
@@ -22,7 +22,7 @@ module "vpc" {
   enable_dns_support   = true
 
   tags = {
-    Environment = "testing"
+    Environment = var.environment_label
   }
 }
 

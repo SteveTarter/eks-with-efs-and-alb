@@ -1,6 +1,6 @@
 resource "aws_security_group" "efs" {
-  name        = "efs-sg"
-  vpc_id      = module.vpc.vpc_id
+  name   = "efs-sg"
+  vpc_id = module.vpc.vpc_id
 
   ingress {
     from_port   = 2049
@@ -28,86 +28,12 @@ kind: ServiceAccount
 metadata:
   name: efs-app-service-account
   namespace: default
+  annotations:
+    eks.amazonaws.com/role-arn: ${aws_iam_role.efs_csi_driver_role.arn}
 EOF
 }
 
-resource "aws_efs_access_point" "gis_tarterware_efs" {
-  file_system_id = var.gis_tarterware_efs_id
-
-  root_directory {
-    path = "/gis-tarterware-files-efs"
-    creation_info {
-      owner_uid   = 1000
-      owner_gid   = 1000
-      permissions = "755"
-    }
-  }
-
-  tags = {
-    Name = "gis-tarterware-files-efs"
-  }
-}
-
-resource "aws_efs_mount_target" "gis_tarterware_efs" {
-  for_each = toset(module.vpc.private_subnets)
-
-  file_system_id = var.gis_tarterware_efs_arn
-  subnet_id      = each.value
-
-  security_groups = [aws_security_group.efs.id]
-}
-
-resource "aws_efs_access_point" "mile_weaver_files_efs" {
-  file_system_id = var.mile_weaver_files_efs_id
-
-  root_directory {
-    path = "/mile-weaver-files-efs"
-    creation_info {
-      owner_uid   = 1000
-      owner_gid   = 1000
-      permissions = "755"
-    }
-  }
-
-  tags = {
-    Name = "mile-weaver-files-efs"
-  }
-}
-
-resource "aws_efs_mount_target" "mile_weaver_files_efs" {
-  for_each = toset(module.vpc.private_subnets)
-
-  file_system_id = var.mile_weaver_files_efs_arn
-  subnet_id      = each.value
-
-  security_groups = [aws_security_group.efs.id]
-}
-
-resource "aws_efs_access_point" "mile_weaver_mongodb_efs" {
-  file_system_id = var.mile_weaver_mongodb_efs_id
-
-  root_directory {
-    path = "/mile-weaver-mongodb-efs"
-    creation_info {
-      owner_uid   = 1000
-      owner_gid   = 1000
-      permissions = "755"
-    }
-  }
-
-  tags = {
-    Name = "mile-weaver-mongodb-efs"
-  }
-}
-
-resource "aws_efs_mount_target" "mile_weaver_mongodb_efs" {
-  for_each = toset(module.vpc.private_subnets)
-
-  file_system_id = var.mile_weaver_mongodb_efs_arn
-  subnet_id      = each.value
-
-  security_groups = [aws_security_group.efs.id]
-}
+data "aws_caller_identity" "current" {}
 
 data "aws_iam_policy_document" "efs_access" {
   statement {
@@ -118,12 +44,8 @@ data "aws_iam_policy_document" "efs_access" {
     ]
 
     resources = [
-      var.gis_tarterware_efs_arn,
-      aws_efs_access_point.gis_tarterware_efs.arn,
-      var.mile_weaver_files_efs_arn,
-      aws_efs_access_point.mile_weaver_files_efs.arn,
-      var.mile_weaver_mongodb_efs_arn,
-      aws_efs_access_point.mile_weaver_mongodb_efs.arn
+      "arn:aws:elasticfilesystem:*:${data.aws_caller_identity.current.account_id}:file-system/*",
+      "arn:aws:elasticfilesystem:*:${data.aws_caller_identity.current.account_id}:access-point/*"
     ]
   }
 }
