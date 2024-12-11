@@ -1,6 +1,3 @@
-terraform-eks-with-alb
-Instructions for using Terraform to set up an EKS cluster with EFS, auto-scaling, and load balancer
-
 ## Description
 This project provides instructions and Terraform scripts to create an AWK EKS cluster with EFS CSI,
 allowing the cluster's components to mount EFS filesystems.
