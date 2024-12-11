@@ -73,3 +73,4 @@ resource "aws_iam_role_policy_attachment" "efs_policy_attachment" {
   role       = module.efs_irsa_role.iam_role_name
   policy_arn = aws_iam_policy.efs_access_policy.arn
 }
+
