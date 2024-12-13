@@ -14,7 +14,7 @@ resource "aws_iam_policy" "efs_csi_driver_policy" {
           "elasticfilesystem:CreateAccessPoint",
           "elasticfilesystem:DeleteAccessPoint"
         ],
-        Resource = "*"
+        Resource = "*" # Grants permissions for all EFS resources
       }
     ]
   })
@@ -34,13 +34,13 @@ data "aws_iam_policy_document" "assume_role_policy" {
 
     principals {
       type        = "Federated"
-      identifiers = [module.eks.oidc_provider_arn]
+      identifiers = [module.eks.oidc_provider_arn] # Links the role to the OIDC provider for the EKS cluster
     }
 
     condition {
       test     = "StringEquals"
       variable = "${module.eks.oidc_provider_arn}:sub"
-      values   = ["system:serviceaccount:kube-system:efs-csi-controller-sa"]
+      values   = ["system:serviceaccount:kube-system:efs-csi-controller-sa"] # Restricts role assumption to the specified service account
     }
   }
 }
@@ -61,26 +61,27 @@ resource "helm_release" "efs_csi_driver" {
 
   set {
     name  = "controller.serviceAccount.create"
-    value = "true"
+    value = "true" # Ensures the Helm chart creates the service account
   }
 
   set {
     name  = "controller.serviceAccount.name"
-    value = "efs-csi-controller-sa"
+    value = "efs-csi-controller-sa" # Matches the service account specified in the IAM role
   }
 
   set {
-    name  = "controller.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = aws_iam_role.efs_csi_driver_role.arn
+    name  = "controller.serviceAccount.annotations.eks\.amazonaws\.com/role-arn"
+    value = aws_iam_role.efs_csi_driver_role.arn # Associates the role with the service account
   }
 
   set {
     name  = "image.repository"
-    value = "602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/aws-efs-csi-driver"
+    value = "602401143452.dkr.ecr.us-east-1.amazonaws.com/eks/aws-efs-csi-driver" # Uses the ECR repository for the driver image
   }
 
   set {
     name  = "region"
-    value = var.region
+    value = var.region # Sets the AWS region for the driver
   }
 }
+
