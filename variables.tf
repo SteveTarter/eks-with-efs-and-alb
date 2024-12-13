@@ -1,3 +1,4 @@
+# Environment label used for tagging and identifying resources
 variable "environment_label" {
   description = "Cluster type label (e.g. testing, prod, etc.)"
   type        = string
@@ -7,7 +8,6 @@ variable "environment_label" {
 variable "cluster_name" {
   description = "EKS cluster name"
   type        = string
-  default     = "tarterware-eks"
 }
 
 variable "region" {

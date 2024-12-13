@@ -1,5 +1,4 @@
-# terraform/autoscaler-manifest.tf
-
+# Configures the Kubernetes provider using AWS EKS cluster details.
 provider "kubectl" {
   host                   = data.aws_eks_cluster.default.endpoint
   cluster_ca_certificate = base64decode(data.aws_eks_cluster.default.certificate_authority[0].data)
@@ -13,6 +12,7 @@ provider "kubectl" {
   }
 }
 
+# Creates a Kubernetes ServiceAccount for the Cluster Autoscaler.
 resource "kubectl_manifest" "service_account" {
   yaml_body = <<-EOF
 apiVersion: v1
@@ -28,6 +28,7 @@ metadata:
 EOF
 }
 
+# Defines a Kubernetes Role with permissions specific to the Cluster Autoscaler.
 resource "kubectl_manifest" "role" {
   yaml_body = <<-EOF
 apiVersion: rbac.authorization.k8s.io/v1
@@ -49,6 +50,7 @@ rules:
 EOF
 }
 
+# Binds the ServiceAccount to the Role in the namespace.
 resource "kubectl_manifest" "role_binding" {
   yaml_body = <<-EOF
 apiVersion: rbac.authorization.k8s.io/v1
@@ -70,6 +72,7 @@ subjects:
 EOF
 }
 
+# Defines a ClusterRole with permissions that span the entire Kubernetes cluster.
 resource "kubectl_manifest" "cluster_role" {
   yaml_body = <<-EOF
 apiVersion: rbac.authorization.k8s.io/v1
@@ -130,6 +133,7 @@ rules:
 EOF
 }
 
+# Binds the ClusterRole to the ServiceAccount at the cluster level.
 resource "kubectl_manifest" "cluster_role_binding" {
   yaml_body = <<-EOF
 apiVersion: rbac.authorization.k8s.io/v1
@@ -150,6 +154,7 @@ subjects:
 EOF
 }
 
+# Deploys the Cluster Autoscaler application as a Kubernetes Deployment.
 resource "kubectl_manifest" "deployment" {
   yaml_body = <<-EOF
 apiVersion: apps/v1
