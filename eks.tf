@@ -6,11 +6,11 @@ data "aws_iam_policy_document" "efs_worker_node" {
       "elasticfilesystem:DescribeFileSystems",
       "elasticfilesystem:DescribeMountTargets",
       "elasticfilesystem:ClientMount",
-      "elasticfilesystem:ClientWrite"
+      "elasticfilesystem:ClientWrite",
+      "ec2:DescribeAvailabilityZones"
     ]
     resources = [
-      # Applies to all EFS file systems in the current account
-      "arn:aws:elasticfilesystem:*:${data.aws_caller_identity.current.account_id}:file-system/*"
+      "*"
     ]
   }
 }
