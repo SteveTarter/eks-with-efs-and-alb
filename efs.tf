@@ -42,7 +42,7 @@ EOF
 data "aws_caller_identity" "current" {}
 
 # IAM policy document allowing access to EFS
-resource "aws_iam_policy_document" "efs_access" {
+data "aws_iam_policy_document" "efs_access" {
   statement {
     actions = [
       "elasticfilesystem:ClientMount",

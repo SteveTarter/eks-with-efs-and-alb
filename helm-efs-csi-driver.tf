@@ -70,7 +70,7 @@ resource "helm_release" "efs_csi_driver" {
   }
 
   set {
-    name  = "controller.serviceAccount.annotations.eks\.amazonaws\.com/role-arn"
+    name  = "controller.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
     value = aws_iam_role.efs_csi_driver_role.arn # Associates the role with the service account
   }
 
