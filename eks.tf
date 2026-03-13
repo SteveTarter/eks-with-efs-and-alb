@@ -21,7 +21,6 @@ resource "aws_iam_policy" "efs_worker_node_policy" {
   policy = data.aws_iam_policy_document.efs_worker_node.json
 }
 
-# Module to manage EKS authentication
 module "eks_aws_auth" {
   source  = "terraform-aws-modules/eks/aws//modules/aws-auth"
   version = "20.31.1"
@@ -32,7 +31,7 @@ module "eks_aws_auth" {
     {
       rolearn  = module.eks_admins_iam_role.iam_role_arn
       username = module.eks_admins_iam_role.iam_role_name
-      groups   = ["system:masters"] # Provides admin access
+      groups   = ["system:masters"]
     },
   ]
 }
@@ -60,9 +59,9 @@ module "eks" {
 
   eks_managed_node_groups = {
     nodes = {
-      min_size       = 1
+      min_size       = 2
       max_size       = 10
-      desired_size   = 1
+      desired_size   = 2
       instance_types = var.node_instance_type
       public_ip      = true
     }
