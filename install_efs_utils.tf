@@ -1,4 +1,4 @@
-resource "kubernetes_daemonset" "install_efs_utils" {
+resource "kubernetes_daemon_set_v1" "install_efs_utils" {
   metadata {
     name      = "install-efs-utils"
     namespace = "kube-system"

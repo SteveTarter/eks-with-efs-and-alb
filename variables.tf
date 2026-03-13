@@ -25,6 +25,6 @@ variable "disk_size" {
 variable "node_instance_type" {
   description = "Instance types for EKS nodes"
   type        = list(string)
-  default     = ["t3.medium"]
+  default     = ["t3.large"]
 }
 

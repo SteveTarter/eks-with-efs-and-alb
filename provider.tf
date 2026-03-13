@@ -5,17 +5,23 @@ provider "aws" {
 
 # Specifies Terraform and provider requirements
 terraform {
+  required_version = "~> 1.0"
+
   required_providers {
-    kubectl = {
-      source  = "gavinbunney/kubectl" # Source for the Kubernetes provider
-      version = ">= 1.14.0" # Ensures compatibility with Kubernetes provider version 1.14.0 or higher
+    aws = {
+      source = "hashicorp/aws"
+      version = "~> 5.0"
     }
+
     helm = {
-      source  = "hashicorp/helm" # Source for the Helm provider
-      version = ">= 2.6.0" # Ensures compatibility with Helm provider version 2.6.0 or higher
+      source  = "hashicorp/helm"
+      version = "~> 2.17.0"
+    }
+
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = ">= 1.14.0"
     }
   }
-
-  required_version = "~> 1.0" # Locks Terraform to use version 1.x
 }
 
