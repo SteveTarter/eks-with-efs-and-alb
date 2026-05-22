@@ -1,17 +1,3 @@
-# Configures the Kubernetes provider using AWS EKS cluster details.
-provider "kubectl" {
-  host                   = data.aws_eks_cluster.default.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.default.certificate_authority[0].data)
-
-  load_config_file       = false
-
-  exec {
-    api_version = "client.authentication.k8s.io/v1beta1"
-    args        = ["eks", "get-token", "--cluster-name", var.cluster_name]
-    command     = "aws"
-  }
-}
-
 # Creates a Kubernetes ServiceAccount for the Cluster Autoscaler.
 resource "kubectl_manifest" "service_account" {
   yaml_body = <<-EOF

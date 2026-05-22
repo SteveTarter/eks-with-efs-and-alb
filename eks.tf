@@ -53,6 +53,13 @@ module "eks" {
 
   enable_irsa = true # Enables IAM Roles for Service Accounts
 
+  cluster_addons = {
+    aws-ebs-csi-driver = {
+      service_account_role_arn = module.ebs_csi_irsa_role.iam_role_arn
+      most_recent              = true
+    }
+  }
+
   eks_managed_node_group_defaults = {
     disk_size = var.disk_size
   }
@@ -110,20 +117,25 @@ resource "aws_security_group_rule" "allow_all_egress" {
   description       = "Restrict outbound traffic to internal IP ranges"
 }
 
-# Retrieves the EKS cluster data for Kubernetes provider configuration
-data "aws_eks_cluster" "default" {
-  name       = module.eks.cluster_name
-  depends_on = [module.eks]
-}
-
 # Configures the Kubernetes provider with EKS cluster details
 provider "kubernetes" {
-  host                   = data.aws_eks_cluster.default.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.default.certificate_authority[0].data)
+  host                   = module.eks.cluster_endpoint
+  cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
   exec {
     api_version = "client.authentication.k8s.io/v1beta1"
-    args        = ["eks", "get-token", "--cluster-name", var.cluster_name]
+    args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_name]
     command     = "aws"
   }
 }
 
+provider "kubectl" {
+  host                   = module.eks.cluster_endpoint
+  cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
+  load_config_file       = false
+  
+  exec {
+    api_version = "client.authentication.k8s.io/v1beta1"
+    args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_name]
+    command     = "aws"
+  }
+}
